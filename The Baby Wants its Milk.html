@@ -1,0 +1,527 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Baby Wants Milk</title>
+	<style>
+        html {
+            background-color: aqua;
+        }
+        .char-style {
+			position: absolute;
+			z-index: 2;
+		}
+
+		.status-style {
+			position: absolute;
+			font-size: 15px;
+			top: 0px;
+			z-index: 2;
+			color: FireBrick;
+		}
+
+		.instructions-style {
+			position: absolute;
+			font-size: 15px;
+			font-style: italic;
+			top: 0px;
+			z-index: 2;
+			color: Navy;
+		}
+
+		.home-style {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			background-color: CornflowerBlue;
+			z-index: 1;
+		}
+	</style>
+</head>
+<body>
+ <div id="home" class="home-style"></div>
+ <div id="status" class="status-style">Level  </div>
+ <div id="instructions" class="instructions-style">*** Take the Baby to Milk. Use Arrow Keys, Space and Enjoy ***</div>
+ <audio id="audio-milk" preload="auto" src="assets/sounds/mixkit-retro-game-notification-212.wav"></audio>
+ <audio id="audio-over" preload="auto" src="assets/sounds/mixkit-arcade-retro-game-over-213.wav"></audio>
+</body>
+</html>
+
+<script>
+let homePlans = [
+    <!-- L1 -->
+    `
+    
+    ====================
+    =      =           =
+    =  b   =           =
+    =                  =
+    ========    ========
+    =                  =
+    =      =    =      =
+    =      =    =   m  =
+    =      =    =      =
+    ====================`,
+        <!-- L2 -->
+    `
+    
+    ====================
+    =      =           =
+    =  b   =    =      =
+    =      =    =   m  =
+    =====  =    ========
+    =  c        d      =
+    =      =    =      =
+    =      =    =      =
+    =      =    =      =
+    ====================`,
+        <!-- L3 -->
+
+    `
+    
+    ====================
+    = s         =   = t=
+    =      =    =   =d==
+    =      =           =
+    =====  =    ========
+    =      =           =
+    =  =====    =====  =
+    =      =    =   =  =
+    =  b   =    = m    =
+    ====================`,
+        <!-- L4 -->
+
+    `
+    
+    ====================
+    =          c=      =
+    =      =    =   =  =
+    =====  =        =  =
+    =      ==========d==
+    =d======    =      =
+    =      =  m =  =====
+    =====  =    =      =
+    =  b   =         e =
+    ====================`,
+        <!-- L5 -->
+
+    `
+    
+    ====================
+    =      =           =
+    =  b   =    =      =
+    =      =    =   k  =
+    =====  =    ========
+    =  c        d      =
+    =      =    =      =
+    =      =    =      =
+    =      =    =   m  =
+    ====================`,
+        <!-- L6 -->
+    
+    `
+    
+    ====================
+    =  s       c=      =
+    =      =    =   =  =
+    =====  =        = k=
+    =      ==d==========
+    =d======    =   m  =
+    =  b   =    =  =====
+    =====  =    =      =
+    =  k   =         e =
+    ====================`,
+        <!-- L7 -->
+    
+    `
+    
+    ====================
+    =   b ======= m ====
+    ====  =======   ====
+    ====   k ==    =====
+    ======d=======d=====
+    =              k   =
+    ====================
+    ====================
+    ====================`,
+        <!-- L8 -->
+    
+    `
+    
+    ====================
+    =   =  =   =       =
+    =  b   =   =   =  ==
+    =      =       =k  =
+    =====  = =  ========
+    =      =    d    = =
+    =      d    =  =  ==
+    =      = c  = ======
+    = k    =    =   m  =
+    ====================`,
+        <!-- L9 -->
+    
+    `
+    
+    ====================
+    = k=    =          =
+    =  =k   d          =
+    =  =    =         m=
+    =  =    ============
+    =  =    d          =
+    =  ======          =
+    =      == ==    =  =
+    =b=    d   =    =k =
+    ====================`,
+        <!-- L10 -->
+    
+    `
+    
+    --------------------
+    -  -  -     -   -  -
+    -----           m---
+    -----d--------------
+    -          k--------
+    -------d------------
+    -               ----
+    -  k       -       -
+    ------------------d-
+    - k            b   -
+    --------------------`,
+        <!-- L11 -->
+    `
+       -----------
+      - e      m-
+     -=====dd====---
+    - ccc k     s ---
+    --------=dd=------
+    -ck         d  t---
+    ========dc==========
+    =                 ==
+    =c       b        k=
+    ====================`,
+        <!-- L12 -->
+    
+    `
+    --------------------
+    -   ==    ==    m==-
+    -                  -
+    -----------d--------
+    - k         =======-
+    -           =      w
+    =d===========d=    -
+    =             =   t=
+    =cccc b===k  =======
+    ====================`,
+        <!-- L13 -->
+    `
+    --------------------
+    =     =   =       m=
+    =       =   ========
+    =d================d=
+    =    k -=-=-    k  =
+    ====d========d======
+    =                  =
+    = =  = = = = = = = =
+    =-b   k=-=  k=-=  ==
+    =-=-=-=-=-=-=-=-=-=-`,
+        <!-- L14 -->
+    `
+    ====================
+    -m =  - b    -  =  -
+    -  =  -k    k-  =  -
+    -d-=  -k    k-  =---
+    -  =  -      -  =  -
+    -  =-----d------=  -
+    -  =k          k=pp-
+    -  ===d======d===  -
+    -  d     ==     d  -
+    ====================`,
+        <!-- L15 -->
+`
+===========================
+=------d   ---------------=
+=-      -    k           -=
+=-m     -        p       -=
+=------------ ------------=
+=============d=============
+=------------ ------------=
+=-b              k       -=
+=-------------------------=
+===========================`,
+                <!-- L16 -->
+`
+---------------------------
+-=========================-
+-=                       =-
+-= =======d=====d====d==d=-
+-=k=       =====d====d==d=-
+-= =       =     =    =  =-
+-= ======d===d==========d=-
+-= =-      -===-         =-
+-=b=-        -=- m-=======-
+-= =======================-
+=   kk               kkkkk=
+===========================`,
+                <!-- L17 -->
+`
+------------------------------
+-=====================   kkk -
+-=                 k     =-  -
+-= =======d=====d====d==d=-  ---
+-=k=       =====d====d==d=-    -
+-= =       =     =    =  =-  kk-
+-= ======d===d==========d=------
+-= =-      -===-         d   ===
+-=b=-        -=-  -=======-d--==
+-= =======================- m  =
+=   kk                    =-----
+===========================`,
+    <!-- L18 -->
+`===========================================----
+ =b                 k                      =   -
+ =                  k                      = m -
+ =                  k                      =   -
+ =                  k                      =   -
+ ===============================d===========   -
+ =                     =                   =   =
+ =                     =====d===========dpp=   =
+ =                     =                   d   =
+ =---------------------------------------------=`,
+    <!-- L19 -->
+`===========================================----
+ = b                   k            =k t=kk=   -
+ = ccc     ss                       d   d  d - -
+ ============= ========================d==== - -
+ =  epp           kkk                 =    = - -
+ =================================d====d==== = -
+ =                             pp            = =
+ ======================================d====== =
+ =m                                            =
+ =---------------------------------------------=`,
+    <!-- L20-final level -->
+`
+---------------------------====================
+-=========================------------       m=
+-=                       =-- e       -        =
+-= =======d=====d====d==d=--  =  -      -  =  -
+-=k=       =====d====d==d=--  =  -k    k-  =  -
+-= =       =     =    =  =--d-=  -k    k-  =---
+-= ======d===d==========d=--  =  -      -  =  -
+-= =-      -===-         =--  =-----d------=  -
+-= =-        -=-  -====       =k          k=pp-
+-= =======================--  ===d======d===  -
+=   kk               kkkkk=-  d     ==     d  -
+===================d===========================
+-=====dd====----ccc  k     s -----------=dd=---   
+ ========dc==========     -ck         d  t---==
+ =c       b        k=                         =
+------------------ -- -------------------------
+==================     ========================                       
+===============================================`
+    ];
+    
+let charText = {
+    "=": "🟥",
+    "b": "👶",
+    "d": "🚪",
+    "c": "🪑",
+    "m": "🍼",
+    "t": "🚽",
+    "s": "🛋️",
+    "e": "🛏️",
+    "k": "🔑",
+    "-": "⬛",
+    "w": "🪟",
+    "p": "😡"
+};
+
+let sound = new Audio("song.wav")
+let scale = Math.floor((document.body.clientWidth - 40) / 20);
+let x = 0, y = 0;
+let level = 0;
+
+let home = document.getElementById("home");
+home.style.width = `${20 * scale}px`;
+home.style.height = `${10 * scale}px`;
+
+let status = document.getElementById("status");
+status.style.left = `${(document.body.clientWidth - status.offsetWidth) / 2}px`;
+
+let homePlan, baby, nodeList = [], useKey, hasKey;
+
+function createNode(text, left, top) {
+    let node = document.createElement("div");
+    node.textContent = text;
+    node.style.fontSize = `${scale}px`;
+    node.style.left = `${left * scale}px`;
+    node.style.top = `${top * scale}px`;
+    node.className = "char-style";
+    node.id = `char-at-${left}-${top}`;
+    return node;
+}
+
+function updateHome() {
+    status.textContent = `Level: ${level + 1}`;
+    homePlan = homePlans[level].trim().split("\n").map(line => {
+        line = line.trim();
+        return [...line] });
+    useKey = false;
+
+    for(let i = 0; i < homePlan.length; i++) {
+        for(let j = 0; j < homePlan[i].length; j++) {
+            let ch = homePlan[i][j];
+            if(ch != " ") {
+                let node = createNode(charText[homePlan[i][j]], j, i);
+                document.body.appendChild(node);
+                switch(homePlan[i][j]) {
+                    case "b":
+                        baby = node;
+                        x = j;
+                        y = i;
+                        homePlan[i][j] = " ";
+                        break;
+                        
+                    case "k":
+                        useKey = true;
+                        break;
+                }
+            }
+        }
+    }
+}
+
+function cleanupHome() {
+    let nodes = document.querySelectorAll(".char-style");
+    for(let eachNode of nodes) {
+        document.body.removeChild(eachNode);
+    }
+}
+
+function showGameOver() {
+    let over = document.createElement("div");
+    over.style.position = "absolute";
+    over.textContent = "🍼👶🍼 Game Over 🍼👶🍼";
+    over.style.fontSize = `${scale / 2}px`;
+    over.style.left = `${document.body.clientWidth / 2 - (scale / 4 * 12)}px`;
+    over.style.top = `${5 * scale}px`;
+    over.style.width = `${scale / 2 * 12}px`;
+    over.style.backgroundColor = "Wheat";
+    over.style.zIndex = 4;
+    
+    document.body.appendChild(over);
+}
+
+function makeAction(r, c) {
+    let node, flag = false;
+    switch(homePlan[r][c]) {
+        case "k":
+            hasKey = true;
+            node = document.getElementById(`char-at-${c}-${r}`);
+            break;
+
+        case "d":
+            if(!useKey || hasKey) {
+                node = document.getElementById(`char-at-${c}-${r}`);
+                hasKey = false;
+            }
+        break;
+    }
+    if(node) {
+        node.parentNode.removeChild(node);
+        homePlan[r][c] = " ";
+        flag = true;
+    }
+}
+
+function doSomeAction() {
+    let flag = false;
+    if(x > 0) {
+        flag = makeAction(y, x - 1);
+    }
+    
+    if(!flag && x < homePlan[y].length - 1) {
+        flag = makeAction(y, x + 1);
+    }
+    
+    if(!flag && y > 0) {
+        makeAction(y - 1, x);
+    }
+
+    if(!flag && y < homePlan.length - 1) {
+        makeAction(y + 1, x);
+    } 
+}
+
+function removeElement(x, y) {
+    console.log('To be removed', x, y);
+    node = document.getElementById(`char-at-${x}-${y}`);
+    if(node) {
+        console.log('Removing node', x, y);
+        node.remove();
+    }
+}
+
+function runTheShow(event) {
+    console.log(event.key, x, y);
+    switch(event.key) {
+        case "ArrowLeft": 
+            if(x > 0 && " m".includes(homePlan[y][x - 1])) {
+                x -= 1;
+                baby.style.left = `${x * scale}px`;
+            }
+        break;
+        case "ArrowRight":
+            if(x < homePlan[y].length - 1 && " m".includes(homePlan[y][x + 1])) {
+                x += 1;
+                baby.style.left = `${x * scale}px`;
+            }
+        break;
+        case "ArrowUp": 
+            if(y > 0 && " m".includes(homePlan[y - 1][x])) {
+                y -= 1;
+                baby.style.top = `${y * scale}px`;
+            }
+        break;
+        case "ArrowDown":
+            if(y < homePlan.length - 1 && " m".includes(homePlan[y + 1][x])) {
+                y += 1;
+                baby.style.top = `${y * scale}px`;
+            }
+        break;
+
+        case " ":
+            doSomeAction();
+        break;
+
+        case "u":
+            let lvl = prompt("Level:");
+            let l = Number(lvl);
+            if(l > 0 && l <= homePlans.length) {
+                level = l - 1;
+                cleanupHome();
+                updateHome();
+            } else {
+                alert("No such level: " + lvl);
+            }
+    }
+    if(homePlan[y][x] == "m") {
+        if(level < homePlans.length - 1) {
+            sound.play();
+            level++;
+            cleanupHome();
+            updateHome();
+        } else {
+            sound.play();
+            removeElement(x, y);
+            showGameOver();
+            window.removeEventListener("keydown", runTheShow);
+        }
+    }
+    event.preventDefault();
+}
+
+window.addEventListener("keydown", runTheShow);
+
+updateHome();
+
+</script>
